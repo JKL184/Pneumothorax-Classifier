@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+{% endblock %}
+
+{% block main %}
+<div class="upload flex flex-vertical">
+  <h2>DRAG AND DROP TO UPLOAD</h2>
+  <button class="btn filled">Or Browse</button>
+  <h2 class="light-text">FILE OR FOLDER: JPG, DICOM images</h2>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/app.min.js') }}" charset="utf-8"></script>
+{% endblock %}

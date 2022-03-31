@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root{
+    --primary-colour: #2931B4;
+    --secondary-colour: #F37352;
+    --light: #F7FBFE;
+    --white: #fff;
+    --black: #000;
+    --font-size-small: 1em;
+    --font-size-med: 1.5em;
+    --font-size-large: 2.5em;
+    --font-size-massive: 4em;
+}
+h2{
+  font-size: var(--font-size-small);
+}
+
+.light-text{
+  font-weight: 300;
+}
+
+.bold-text{
+  font-weight: 600;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: var(--primary-colour)
+}
+
+button,ul,li, a{ 
+    text-decoration: none;
+    list-style-type: none;
+}
+
+.flex{
+  display: flex;
+  gap: var(--gap,3em);
+}
+
+.flex-vertical{
+  flex-direction: column;
+  gap: var(--gap,2em);
+}
+
+.nav__div{
+    position:absolute;
+    top: 0;
+    left:0;
+    padding:2em;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 9999;
+}
+
+
+.nav__link >a{
+  font-size: var(--font-size-small);
+  color: var(--black);
+}
+
+.nav__link:hover >a{
+  color: var(--primary-colour);
+}
+
+.nav__link:visited >a{
+  color: var(--secondary-colour);
+  font-weight: 600;
+}
+
+/* Button*/
+.btn{
+  padding: .8em 1.5em .8em 1.5em;
+  background-color: transparent;
+  border-radius: .5em;
+  font-weight: 600;
+}
+
+.filled{
+  background-color: var(--primary-colour);
+  color: var(--white);
+  border: none;
+}
+
+main{
+  position: absolute;
+  top: 15%;
+  left: 10%;
+}
+.upload{
+  position: relative;
+  left: 15%;
+  margin-top: 3em;
+  background-color: var(--light);
+  width: 60vw;
+  height:35vw;
+  border-radius: 2em;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1 >Settings</h1>
+<p>Click the pencil to edit the value</p>
+
+
+<form method="POST">
+
+    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+
+    {{ form.size.label}}
+    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+    {{ form.size}}
+
+    {{ form.email.label}}
+    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+    {{ form.email}}
+
+    {{ form.submit}}
+
+</form>
+
