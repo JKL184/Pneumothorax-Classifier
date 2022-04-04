@@ -14,7 +14,9 @@
 h2{
   font-size: var(--font-size-small);
 }
-
+h1{
+  font-size: var(--font-size-massive);
+}
 .light-text{
   font-weight: 300;
 }
@@ -99,4 +101,34 @@ main{
   border-radius: 2em;
   align-items: center;
   justify-content: center;
+}
+
+.login_bg{
+  background-color: var(--primary-colour);
+
+}
+
+.login{
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.login_form{
+  margin-left: 12em;
+}
+
+.form-group{
+  padding: .8em;
+}
+
+.form-control{
+  border-radius: .5em;
+  width: 100%;
+  padding: .8em;
+  border: 1px solid var(--primary-colour);
+}
+
+.long_btn{
+  width: 100%;
 }

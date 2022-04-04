@@ -1,20 +1,41 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A pneumothorax identification system">
+  <title>Lungify</title>
 
-{% block main %}
-  <div class="login-form center-block">
-    <h2>Please Log in</h2>
-    
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="login">
+  {% include 'flash_messages.html' %}
+  <div class="login_form">
+    <h1>Login</h1>
+    <h2>Please login to access Lungify</h2>
+
     <form action="{{ url_for('login') }}" method="post">
       {{ form.csrf_token }}
-      <div class="form-group">
+      <div class="form-group ">
         {{ form.username.label }}
-        {{ form.username(class='form-control', placeholder="Enter your username") }}
+        <br>
+        {{ form.username(class='form-control', placeholder="Email") }}
       </div>
       <div class="form-group">
         {{ form.password.label }}
-        {{ form.password(class='form-control') }}
+        <br>
+        {{ form.password(class='form-control', placeholder="Password") }}
       </div>
-      <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
+      <button type="submit" name="submit" class="btn filled long_btn">Log in</button>
     </form>
   </div>
-{% endblock %}
+
+  <div class="login_bg">
+    <img src="{{ url_for('static', filename='images/login.png') }}"></img>
+  </div>
+
+
+</body>
+</html>
+
