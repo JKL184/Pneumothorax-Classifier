@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
+/*General Styles */
 :root{
     --primary-colour: #2931B4;
     --secondary-colour: #F37352;
@@ -40,6 +41,10 @@ h1{
   font-weight: 600;
 }
 
+/*End General Styles */
+
+
+/* Header Nav Styles */
 button,ul,li, a{ 
     text-decoration: none;
     list-style-type: none;
@@ -81,6 +86,8 @@ button,ul,li, a{
   font-weight: 600;
 }
 
+/* End Nav Styles */
+
 /* Button*/
 .btn{
   padding: .8em 1.5em .8em 1.5em;
@@ -94,24 +101,12 @@ button,ul,li, a{
   color: var(--white);
   border: none;
 }
+/*End Button*/
 
-main{
-  position: absolute;
-  top: 15%;
-  left: 10%;
-}
-.upload{
-  position: relative;
-  left: 15%;
-  margin-top: 3em;
-  background-color: var(--light);
-  width: 60vw;
-  height:35vw;
-  border-radius: 2em;
-  align-items: center;
-  justify-content: center;
-}
+/* End Header Nav Styles */
 
+
+/* login page styles */
 .login_right_col{
   background-color: var(--primary-colour);
   height: 100vh;
@@ -148,3 +143,23 @@ main{
   background-color: lightgrey;
 }
 
+/* End login page styles */
+
+main{
+  position: absolute;
+  top: 15%;
+  left: 10%;
+}
+
+/* Upload page Styles */
+.upload{
+  position: relative;
+  left: 15%;
+  margin-top: 3em;
+  background-color: var(--light);
+  width: 60vw;
+  height:35vw;
+  border-radius: 2em;
+  align-items: center;
+  justify-content: center;
+}

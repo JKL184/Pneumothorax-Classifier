@@ -15,10 +15,13 @@ from werkzeug.security import check_password_hash
 ###
 # Routing for your application.
 ###
+"""
 @app.route('/')
 def home():
-    """Render website's home page."""
+    #Render website's home page.
     return render_template('about.html')
+
+"""
 
 @app.route('/upload')
 @login_required
@@ -33,7 +36,7 @@ def about():
     return render_template('about.html', name="Mary Jane")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if request.method == "POST" and form.validate_on_submit():
@@ -69,7 +72,7 @@ def logout():
     # Logout the user and end the session
     logout_user()
     flash('You have been logged out.', 'danger')
-    return redirect(url_for('home'))
+    return redirect(url_for('/'))
     
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
