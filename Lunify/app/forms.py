@@ -9,5 +9,5 @@ class settingsForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[InputRequired()])
+    username = StringField('Email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
