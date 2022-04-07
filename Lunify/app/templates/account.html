@@ -1,23 +1,31 @@
 {% extends "base.html" %}
 
 {% block main %}
+<div>
 <h1 >Settings</h1>
 <p>Click the pencil to edit the value</p>
 
+<form action="{{ url_for('account') }}" method="post">
+    {{ form.csrf_token }}
+    <div class="form-group ">
+      {{ form.size.label }}
+      <br>
+      <br>
+      <img class= "center" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+      {{ form.size(class='form-control') }}
+    </div>
+    <div class="form-group">
+      {{ form.email.label }}
+      <br>
+      <br>
+      <img class= "center" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+      {{ form.email(class='form-control') }}
+    </div>
+    <button type="submit" name="submit" class="btn filled long_btn">Save</button>
 
-<form method="POST">
+    <button >Cancel</button>
+  </form>
 
-    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+</div>
 
-    {{ form.size.label}}
-    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-    {{ form.size}}
-
-    {{ form.email.label}}
-    <img src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-    {{ form.email}}
-
-    {{ form.submit}}
-
-</form>
-
+{% endblock %}
