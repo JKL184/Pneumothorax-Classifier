@@ -73,3 +73,13 @@ ALTER VIEW Positive_Cases AS
 SELECT PatientID, identification, classification, size
 FROM results
 WHERE identification = 'Positive';
+
+CREATE VIEW Small_Cases AS 
+SELECT PatientID, size
+FROM results
+WHERE identification = 'Positive' and classification = 'Small';
+
+CREATE VIEW Large_Cases AS 
+SELECT PatientID, size
+FROM results
+WHERE identification = 'Positive' and classification = 'Large';
