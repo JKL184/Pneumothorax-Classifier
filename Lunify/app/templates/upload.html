@@ -7,7 +7,14 @@
 {% block main %}
 <div class="upload flex flex-vertical">
   <h2>DRAG AND DROP TO UPLOAD</h2>
-  <button class="btn filled">Or Browse</button>
+  <form method=post enctype=multipart/form-data>
+    <p class="text-light">
+       <input  type="file" name="file" id="imageUpload" value="" accept=".png,.jpg" > 
+       <label class="btn filled"for="imageUpload">Or Browse</label>
+       <input type=submit value=Detect >
+     </p>
+ </form> 
+  <!-- <button class="btn filled">Or Browse</button> -->
   <h2 class="light-text">FILE OR FOLDER: JPG, DICOM images</h2>
 </div>
 {% endblock %}

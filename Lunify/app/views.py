@@ -11,7 +11,8 @@ from app.forms import LoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile
 from werkzeug.security import check_password_hash
-
+from werkzeug.utils import secure_filename
+import os
 ###
 # Routing for your application.
 ###
@@ -23,12 +24,22 @@ def home():
 
 """
 
-@app.route('/upload')
+# @app.route('/upload')
+# @login_required
+# def upload():
+#     """Render website's home page."""
+#     return render_template('upload.html')
+
+@app.route('/upload', methods = ['GET', 'POST'])
 @login_required
 def upload():
-    """Render website's home page."""
+    if request.method == 'POST':
+        f = request.files['file']
+        filename=secure_filename(f.filename)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        flash('uploaded successfully.', 'success')
+        return render_template('upload.html')
     return render_template('upload.html')
-
 
 @app.route('/about/')
 def about():
@@ -72,7 +83,7 @@ def logout():
     # Logout the user and end the session
     logout_user()
     flash('You have been logged out.', 'danger')
-    return redirect(url_for('/'))
+    return redirect(url_for('login'))
     
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
