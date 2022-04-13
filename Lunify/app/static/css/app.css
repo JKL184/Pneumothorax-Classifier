@@ -163,3 +163,9 @@ main{
   align-items: center;
   justify-content: center;
 }
+
+
+
+input[type="file"]{
+  display: none;
+}
