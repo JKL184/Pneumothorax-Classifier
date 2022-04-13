@@ -15,8 +15,20 @@ Flask-Migrate
 Flask-Login
 psycopg2
 python-dotenv
+flask_mysqldb
+pymysql
+email_validator
 
 # ----------------------
 # Production Server
 # ----------------------
 gunicorn
+
+# ----------------------
+# Backend
+# ----------------------
+
+matplotlib
+numpy
+keras
+pillow

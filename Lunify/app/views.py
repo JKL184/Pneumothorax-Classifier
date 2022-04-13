@@ -5,30 +5,105 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app, db, login_manager
+from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from app.forms import LoginForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
-import os
-###
+# import io
+# import os 
+# import matplotlib.pyplot as plt 
+# import tensorflow as tf 
+# import numpy as np 
+# import time
+# from __future__ import division, print_function
+# from PIL import Image
+# from build_image import read_image,classify_decode
+# from build_models import build_segment
+# from prediction import prediction 
+
+# classify_weights_path = "chexnet_model_new.h5"
+# segment_weights_path = 'best_Double_Unet_new.hdf5'
+# pred = prediction(classify_weights_path,segment_weights_path)
+# ###
 # Routing for your application.
 ###
-"""
-@app.route('/')
-def home():
-    #Render website's home page.
-    return render_template('about.html')
 
-"""
+
+# @app.route('/')
+# def home():
+#     #Render website's home page.
+#     return render_template('about.html')
+
+
 
 # @app.route('/upload')
 # @login_required
 # def upload():
 #     """Render website's home page."""
 #     return render_template('upload.html')
+
+# @app.route('/test', methods=['GET', 'POST']) 
+# def main_page():
+#     if request.method == 'POST':
+#         file = request.files['file']
+#         filename = secure_filename(file.filename)
+#         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#         return redirect(url_for('prediction', filename=filename))
+#     return render_template('index.html')
+
+# @app.route('/prediction/<filename>') 
+# def prediction(filename):
+
+#     # Make prediction
+#     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+#     classify_output, pred_mask = pred.Predict(image_path)
+#     print("Classification Output : ",classify_output)
+#     if(classify_output> 0.5):
+#         print("Classifier Prediction Confidence : {}%".format(classify_output*100))
+#         print('segment printing')
+#         pred_mask1 = np.squeeze(pred_mask[:,:,:,1])
+#         plt.imsave('predicted_mask.png', pred_mask1)
+
+#         background = Image.open(image_path)
+#         overlay = Image.open('predicted_mask.png')
+
+#         background = background.convert("RGBA")
+#         overlay = overlay.convert("RGBA")
+
+#         new_img = Image.blend(background, overlay, 0.3)
+
+#         new_graph_name = "Final_Output_pos_" + str(time.time()) + ".png"
+
+#         for filename in os.listdir('static/'):
+#             if filename.startswith('Final_Output_p'):  # not to remove other images
+#                 os.remove('static/' + filename)
+
+#         new_img.save("static/" + new_graph_name)
+
+#         classify_result = classify_output*100
+#         classify_text = 'Pneumothorax Found..!!'
+        
+#     else:
+#         print('No Pneumothorax Detection...!')
+#         no_confidence = 1 - classify_output
+#         print('Classifier Prediction Confidence : {}%'.format(no_confidence*100))
+#         classify_result = no_confidence*100
+#         classify_text = 'No Pneumothorax Detection...!'
+#         background = Image.open(image_path)
+
+#         new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
+
+#         for filename in os.listdir('static/'):
+#             if filename.startswith('Final_Output_n'):  # not to remove other images
+#                 os.remove('static/' + filename)
+
+#         background.save("static/" + new_graph_name)
+#     return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text)
+
 
 @app.route('/upload', methods = ['GET', 'POST'])
 @login_required
@@ -70,9 +145,6 @@ def login():
                 return redirect(url_for("upload"))
             else:
                 flash('Username or Password is incorrect.', 'danger')
-
-
-
             # remember to flash a message to the user
             # they should be redirected to a secure-page route instead
     return render_template("login.html", form=form)
