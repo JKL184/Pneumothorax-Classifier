@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 # Flask-Login login manager
 login_manager = LoginManager()
 login_manager.init_app(app)

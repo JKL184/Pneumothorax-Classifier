@@ -27,8 +27,9 @@ gunicorn
 # ----------------------
 # Backend
 # ----------------------
-
+tensorflow
 matplotlib
 numpy
 keras
 pillow
+intel-tensorflow==2.8.0

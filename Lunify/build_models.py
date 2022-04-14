@@ -23,7 +23,7 @@ def build_classify():
     base_model2 = tf.keras.Model(inputs = base_model.input, outputs = predictions)
 
     #Loading the pre-trained chexnet weights
-    base_model2.load_weights('brucechou1983_CheXNet_Keras_0.3.0_weights.h5')
+    base_model2.load_weights('../../models stuff/brucechou1983_CheXNet_Keras_0.3.0_weights.h5')
 
     #Removing the dummy layer
     base_model2.layers.pop()
