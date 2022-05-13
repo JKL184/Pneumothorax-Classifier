@@ -197,3 +197,24 @@ input[type="file"]{
   border-radius: 1em 0em 0em 1em ;
   width: 40vw;
 }
+
+.alert{
+  position:absolute;
+  z-index: 9999;
+  top: 15%;
+  left: 40%;
+  border-radius: .4em;
+  padding: 1.2em;
+  background-color: rgb(114, 181, 216);
+  color: var(--black);
+
+}
+
+.alert-success{
+  background-color: #39c181 ;
+}
+
+.alert-danger{
+
+  background-color: rgb(221, 135, 164);
+}
