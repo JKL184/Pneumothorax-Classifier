@@ -29,6 +29,14 @@ h1{
   font-size: var(--font-size-massive);
 }
 
+h3{
+  font-size: var(--font-size-med);
+}
+
+.secondary-color{
+  color:var(--secondary-colour)
+}
+
 .italic{
   font-style: italic;
 }
@@ -168,4 +176,24 @@ main{
 
 input[type="file"]{
   display: none;
+}
+
+.results{
+
+}
+.res_div{
+  border: 1px solid var(--secondary-colour);
+  max-height: 10vh;
+  padding: 1em .5em .5em 1em;
+  color: var(--primary-colour);
+  border-radius: 1em;
+}
+
+.bp-10{
+  padding-bottom: .5em;
+}
+
+.result_img{
+  border-radius: 1em 0em 0em 1em ;
+  width: 40vw;
 }
