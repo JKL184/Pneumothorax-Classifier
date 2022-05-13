@@ -56,6 +56,15 @@ RENAME TO experts;
 ALTER TABLE results
 ADD size int; 
 
+ALTER TABLE results 
+ADD dateinfo DATETIME, 
+ADD patientname VARCHAR(100), 
+ADD location VARCHAR(100), 
+ADD EmployeeID VARCHAR(30);
+
+ALTER TABLE xrays
+ADD  xrayfile VARCHAR(255);
+
 
 -- creating views
 
