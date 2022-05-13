@@ -9,7 +9,7 @@ from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from app.forms import LoginForm
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import UserProfile
+from app.models import UserProfile,Result,Scan
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 import io
@@ -24,8 +24,8 @@ from build_image import read_image,classify_decode
 from build_models import build_segment
 from prediction import prediction 
 
-classify_weights_path = "../../models stuff/chexnet_model_new.h5"
-segment_weights_path = '../../models stuff/best_Double_Unet_new.hdf5'
+classify_weights_path = "../../models stuff/chexnet_model_new2.h5"
+segment_weights_path = '../../models stuff/1_5best_Double_Unet_new.hdf5'
 pred = prediction(classify_weights_path,segment_weights_path)
 # ###
 # Routing for your application.
@@ -50,16 +50,22 @@ def main_page():
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
+        scan=Scan(photo=filename,user_id=1)
+        if scan is not None:
+            db.session.add(scan)
+            db.session.commit()
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('prediction', filename=filename))
     return render_template('index.html')
+
+
 
 @app.route('/prediction/<filename>') 
 def prediction(filename):
 
 #     # Make prediction
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    
+    scan=filename
     classify_output, pred_mask = pred.Predict(image_path)
     print("Classification Output : ",classify_output)
     if(classify_output> 0.5):
@@ -82,7 +88,7 @@ def prediction(filename):
             if filename.startswith('Final_Output_p'):  # not to remove other images
                 os.remove('app/static/' + filename)
 
-        new_img.save("app/static/" + new_graph_name)
+        new_img.save(os.path.join("app/static/", new_graph_name))
 
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Found..!!'
@@ -98,10 +104,18 @@ def prediction(filename):
         new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
 
         for filename in os.listdir('app/static/'):
-            if filename.startswith('Final_Output_n'):  # not to remove other images
+            if filename.startswith('Final_Output_neg_'+filename):  # not to remove other images
                 os.remove('app/static/' + filename)
 
-        background.save("app/static/" + new_graph_name)
+        
+        
+
+        background.save((os.path.join("app/static/", new_graph_name)))
+    result=Result(photo=new_graph_name,scan=scan,identification="Negative",confidence=classify_result,user_id=1)
+    if result is not None:
+            db.session.add(result)
+            db.session.commit()
+
     return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text)
 
 
@@ -109,12 +123,17 @@ def prediction(filename):
 @login_required
 def upload():
     if request.method == 'POST':
-        f = request.files['file']
-        filename=secure_filename(f.filename)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        scan=Scan(photo=filename,user_id=1)
+        if scan is not None:
+            db.session.add(scan)
+            db.session.commit()
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         flash('uploaded successfully.', 'success')
-        return render_template('upload.html')
+        return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
+    
 
 @app.route('/about/')
 def about():
@@ -128,23 +147,23 @@ def login():
     if request.method == "POST" and form.validate_on_submit():
         # change this to actually validate the entire form submission
         # and not just one field
-        if form.username.data:
+        if form.email.data:
             # Get the username and password values from the form.
-            username=form.username.data
+            email=form.email.data
             password=form.password.data
             # using your model, query database for a user based on the username
             # and password submitted. Remember you need to compare the password hash.
             # You will need to import the appropriate function to do so.
             # Then store the result of that query to a `user` variable so it can be
             # passed to the login_user() method below.
-            user = UserProfile.query.filter_by(username=username).first()
+            user = UserProfile.query.filter_by(email=email).first()
             if user is not None and check_password_hash(user.password, password):
             # get user id, load into session
                 login_user(user)
                 flash('Logged in successfully.', 'success')
                 return redirect(url_for("upload"))
             else:
-                flash('Username or Password is incorrect.', 'danger')
+                flash('Email or Password is incorrect.', 'danger')
             # remember to flash a message to the user
             # they should be redirected to a secure-page route instead
     return render_template("login.html", form=form)

@@ -8,6 +8,7 @@ class Config(object):
     DEBUG = False
     #SECRET_KEY = "lungify"
     UPLOAD_FOLDER = './app/static/uploads'
+    OUTPUT_FOLDER = './app/static/outputs'
     #SQLALCHEMY_DATABASE_URI = 'postgresql://lungify:lungify@localhost/lungify_db'
     #DATABASE_URL='postgresql://lungify:lungify@localhost/lungify_db'
     SECRET_KEY = os.environ.get('SECRET_KEY', 'Som3$ec5etK*y')

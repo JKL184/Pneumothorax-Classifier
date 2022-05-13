@@ -12,13 +12,13 @@ class UserProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
-    username = db.Column(db.String(80), unique=True)
+    email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(255))
 
-    def __init__(self, first_name, last_name, username, password):
+    def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name
         self.last_name = last_name
-        self.username = username
+        self.email = email
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
     def is_authenticated(self):
@@ -31,10 +31,41 @@ class UserProfile(db.Model):
         return False
 
     def get_id(self):
-        try:
-            return unicode(self.id)  # python 2 support
-        except NameError:
-            return str(self.id)  # python 3 support
+        return str(self.id)  # python 3 support
 
     def __repr__(self):
         return '<User %r>' % (self.username)
+
+class Scan(db.Model):
+    __tablename__ = 'Scans'
+
+    id = db.Column(db.Integer, primary_key=True)
+    photo=db.Column(db.String(255))
+    user_id=db.Column(db.Integer)
+
+    def __init__(self, photo, user_id ):
+        self.photo= photo
+        self.user_id= user_id
+
+    def get_id(self):
+        return str(self.id)  # python 3 support
+
+class Result(db.Model):
+    __tablename__ = 'Results'
+
+    id = db.Column(db.Integer, primary_key=True)
+    photo=db.Column(db.String(255))
+    scan=db.Column(db.String(255))
+    identification = db.Column(db.String(80))
+    confidence=db.Column(db.Float)
+    user_id=db.Column(db.Integer)
+
+    def __init__(self, photo,scan,identification,confidence, user_id ):
+        self.photo= photo
+        self.scan=scan
+        self.identification=identification
+        self.confidence=confidence
+        self.user_id= user_id
+
+    def get_id(self):
+        return str(self.id)  # python 3 support
