@@ -6,7 +6,7 @@ from wtforms.validators import InputRequired, DataRequired,Email
 class settingsForm(FlaskForm):
 
     size= IntegerField("Small Pneumothorax Size", validators=[DataRequired()])
-    
+    email = StringField('Email', validators=[InputRequired()])
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired()])
