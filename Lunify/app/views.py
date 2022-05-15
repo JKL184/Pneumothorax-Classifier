@@ -7,7 +7,7 @@ This file creates your application.
 from __future__ import division, print_function
 from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from app.forms import LoginForm
+from app.forms import LoginForm,RegisterForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan
 from werkzeug.security import check_password_hash
@@ -18,18 +18,56 @@ import matplotlib.pyplot as plt
 import tensorflow as tf 
 import numpy as np 
 import time
-
+import cv2
+import pydicom
 from PIL import Image
 from build_image import read_image,classify_decode
 from build_models import build_segment
 from prediction import prediction 
+import datetime
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+import smtplib
 
 classify_weights_path = "../../models stuff/chexnet_model_new2.h5"
-segment_weights_path = '../../models stuff/1_5best_Double_Unet_new.hdf5'
+segment_weights_path = '../../models stuff/B2best_Double_Unet_new.hdf5'
 pred = prediction(classify_weights_path,segment_weights_path)
 # ###
 # Routing for your application.
 ###
+
+smtp = smtplib.SMTP('smtp.gmail.com', 587)
+smtp.ehlo()
+smtp.starttls()
+smtp.login('Lungify@gmail.com', 'Lungify123')
+
+# send our email message 'msg' to our boss
+def message(subject="Python Notification",
+			text="", img=None,
+			attachment=None):
+	msg = MIMEMultipart()
+	msg['Subject'] = subject
+	msg.attach(MIMEText(text))
+	if img is not None:	
+		if type(img) is not list:	
+			img = [img]
+		for one_img in img:	
+			img_data = open(one_img, 'rb').read()
+			msg.attach(MIMEImage(img_data,
+								name=os.path.basename(one_img)))
+	if attachment is not None:
+		if type(attachment) is not list:
+			attachment = [attachment]
+		for one_attachment in attachment:
+			with open(one_attachment, 'rb') as f:
+				file = MIMEApplication(f.read(),name=os.path.basename(one_attachment))
+			file['Content-Disposition'] = f'attachment;\
+			filename="{os.path.basename(one_attachment)}"'
+			msg.attach(file)
+	return msg
+#smtp.quit()
 
 
 @app.route('/home')
@@ -37,24 +75,52 @@ def home():
     #Render website's home page.
     return render_template('about.html')
 
+def dicom2png(file):
+    '''
+    This function inputs the path of the image to be read
+    and create a .png format for the same image and store in the path created.
+    '''
+    ds = pydicom.read_file(str(file))
+    img = ds.pixel_array
+    # formatting the image to make training the network faster.
+    img = cv2.resize(img, (256,256) )
+    fname = file.replace('.dcm','.png')
+    cv2.imwrite(fname, img)
 
-
-# @app.route('/upload')
-# @login_required
-# def upload():
-#     """Render website's home page."""
-#     return render_template('upload.html')
+def jpg2png(file):
+    im1 = cv2.imread(str(file))
+    # formatting the image to make training the network faster.
+    img = cv2.resize(im1, (256,256) )
+    fname = file.replace('.jpg','.png')
+    cv2.imwrite(fname, img)
 
 @app.route('/test', methods=['GET', 'POST']) 
 def main_page():
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
+        name,extension=os.path.splitext(filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if extension==".dcm":
+            dicom2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = filename.replace('.dcm','.png')
+        if extension==".jpg":
+            jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = filename.replace('.jpg','.png')
         scan=Scan(photo=filename,user_id=1)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Call the message function
+        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
+                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Make a list of emails, where you wanna send mail
+        to = ["jkl184013@gmail.com"]
+        # Provide some data to the sendmail function!
+        smtp.sendmail(from_addr="Lungify@gmail.com",
+                    to_addrs=to, msg=msg.as_string())
         return redirect(url_for('prediction', filename=filename))
     return render_template('index.html')
 
@@ -91,14 +157,14 @@ def prediction(filename):
         new_img.save(os.path.join("app/static/", new_graph_name))
 
         classify_result = classify_output*100
-        classify_text = 'Pneumothorax Found..!!'
+        classify_text = 'Pneumothorax Detected'
         
     else:
         print('No Pneumothorax Detection...!')
         no_confidence = 1 - classify_output
         print('Classifier Prediction Confidence : {}%'.format(no_confidence*100))
         classify_result = no_confidence*100
-        classify_text = 'No Pneumothorax Detection...!'
+        classify_text = 'No Pneumothorax Detected'
         background = Image.open(image_path)
 
         new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
@@ -125,20 +191,74 @@ def upload():
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
+        name,extension=os.path.splitext(filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if extension==".dcm":
+            dicom2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = filename.replace('.dcm','.png')
+        if extension==".jpg":
+            jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = filename.replace('.jpg','.png')
+        if extension==".jpeg":
+            jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filename = filename.replace('.jpeg','.png')
         scan=Scan(photo=filename,user_id=1)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('uploaded successfully.', 'success')
         return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
+@app.route('/settings', methods=["GET", "POST"], endpoint="settings")
+@login_required 
+def settings():
+    form = settingsForm()
+    if request.method == "POST" and form.validate_on_submit():
+        if form.email.data:
+            email=form.email.data
+            size= form.size.data
+
+
+        return render_template('settings.html')
+
+    return render_template('settings.html',form=form)
+
 
 @app.route('/about/')
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
+
+@app.route('/settings/')
+def settings():
+    """Render the website's about page."""
+    return render_template('settings.html')
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    if request.method == "POST" and form.validate_on_submit():
+        # change this to actually validate the entire form submission
+        # and not just one field
+        if form.email.data:
+            # Get the username and password values from the form.
+            fname=form.fname.data
+            lname=form.lname.data
+            email=form.email.data
+            password=form.password.data
+            user = UserProfile(first_name=fname,last_name=lname, email=email,password=password)
+            if user is not None :
+                db.session.add(user)
+                db.session.commit()
+            # get user id, load into session
+                return redirect(url_for("login"))
+            else:
+                flash('User already exists ', 'danger')
+    return render_template("register.html", form=form)
+
 
 
 @app.route("/", methods=["GET", "POST"])

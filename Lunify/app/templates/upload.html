@@ -13,13 +13,14 @@
  -->       <!-- <label class="btn filled" for="imageUpload">Or Browse</label> -->
        <!-- <input type=submit value=Detect > -->
       <label class="custom-file-upload" >
-        <input type="file" class="btn filled" name="file" id="imageUpload"  accept=".png,.jpg" />
+        <input type="file" class="btn filled" name="file" id="imageUpload"  accept=".dcm,.png,.jpg,.jpeg" />
         <p class="btn filled">Or Browse</p>  
       </label>
+      <input class="btn " type=submit value=Detect>
   </form> 
   <!-- <button class="btn filled">Or Browse</button> -->
   <h2 class="light-text">FILE OR FOLDER: JPG, DICOM images</h2>
-  <input class="btn " type=submit value=Detect>
+ 
 {% endblock %}
 
 {% block js %}

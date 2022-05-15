@@ -33,3 +33,5 @@ numpy
 keras
 pillow
 intel-tensorflow==2.8.0
+opencv-python
+pydicom
