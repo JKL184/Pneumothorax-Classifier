@@ -209,15 +209,12 @@ def build_segment(shape):
     x = ASPP(x, 64)
     x = decoder1(x, skip_1)
     outputs1 = output_block(x)
-
     x = inputs * outputs1
-
     x, skip_2 = encoder2(x)
     x = ASPP(x, 64)
     x = decoder2(x, skip_1, skip_2)
     outputs2 = output_block(x)
     outputs = Concatenate(axis=1)([outputs1, outputs2])
-
     model = Model(inputs, outputs)
     return model
 

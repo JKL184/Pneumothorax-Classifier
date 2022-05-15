@@ -124,8 +124,6 @@ def main_page():
         return redirect(url_for('prediction', filename=filename))
     return render_template('index.html')
 
-
-
 @app.route('/prediction/<filename>') 
 def prediction(filename):
 
@@ -139,23 +137,16 @@ def prediction(filename):
         print('segment printing')
         pred_mask1 = np.squeeze(pred_mask[:,:,:,1])
         plt.imsave('predicted_mask.png', pred_mask1)
-
         background = Image.open(image_path)
         overlay = Image.open('predicted_mask.png')
-
         background = background.convert("RGBA")
         overlay = overlay.convert("RGBA")
-
         new_img = Image.blend(background, overlay, 0.3)
-
         new_graph_name = "Final_Output_pos_" + str(time.time()) + ".png"
-
         for filename in os.listdir('app/static/'):
             if filename.startswith('Final_Output_p'):  # not to remove other images
                 os.remove('app/static/' + filename)
-
         new_img.save(os.path.join("app/static/", new_graph_name))
-
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Detected'
         
@@ -166,23 +157,20 @@ def prediction(filename):
         classify_result = no_confidence*100
         classify_text = 'No Pneumothorax Detected'
         background = Image.open(image_path)
-
         new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
-
         for filename in os.listdir('app/static/'):
             if filename.startswith('Final_Output_neg_'+filename):  # not to remove other images
                 os.remove('app/static/' + filename)
-
-        
-        
-
         background.save((os.path.join("app/static/", new_graph_name)))
     result=Result(photo=new_graph_name,scan=scan,identification="Negative",confidence=classify_result,user_id=1)
     if result is not None:
             db.session.add(result)
             db.session.commit()
+		
+    form=resultsForm()
+    
 
-    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text)
+    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,form=form)
 
 
 @app.route('/upload', methods = ['GET', 'POST'])
