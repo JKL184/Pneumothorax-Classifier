@@ -7,7 +7,7 @@ This file creates your application.
 from __future__ import division, print_function
 from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from app.forms import LoginForm,RegisterForm
+from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan
 from werkzeug.security import check_password_hash
@@ -232,10 +232,6 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
-@app.route('/settings/')
-def settings():
-    """Render the website's about page."""
-    return render_template('settings.html')
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
