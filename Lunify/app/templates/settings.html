@@ -1,29 +1,35 @@
 {% extends "base.html" %}
 
 {% block main %}
-<div>
-<h1 >Settings</h1>
-<p>Click the pencil to edit the value</p>
+<div class="primary-color">
+<h3 class="bp-10 tp-30">Settings</h3>
+<p class="bp-20">Click to edit the value</p>
 
-<form action="{{ url_for('settings') }}" method="post">
+<form class="settingsform" action="{{ url_for('settings') }}" method="POST" enctype="multipart/form-data">
     {{ form.csrf_token }}
-    <div class="form-group ">
+    <div class="form_group flex bp-20">
       {{ form.size.label }}
       <br>
       <br>
-      <img class= "center" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-      {{ form.size(class='form-control') }}
+      <div>
+      <img class= "edit-icon" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+      {{ form.size(class='form-input') }}
+        </div>
+
     </div>
-    <div class="form-group">
+
+    <div class="form_group flex bp-20">
       {{ form.email.label }}
       <br>
       <br>
-      <img class= "center" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-      {{ form.email(class='form-control') }}
+      <div>
+      <img class= "edit-icon" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
+      {{ form.email(class='form-input') }}
+      </div>
     </div>
-    <button type="submit" name="submit" class="btn filled long_btn">Save</button>
+    <button type="submit" name="submit" class="btn filled">Save</button>
 
-    <button >Cancel</button>
+    <button class="btn cancel" >Cancel</button>
   </form>
 
 </div>

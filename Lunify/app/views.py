@@ -157,14 +157,14 @@ def prediction(filename):
         new_img.save(os.path.join("app/static/", new_graph_name))
 
         classify_result = classify_output*100
-        classify_text = 'Pneumothorax Found..!!'
+        classify_text = 'Pneumothorax Detected'
         
     else:
         print('No Pneumothorax Detection...!')
         no_confidence = 1 - classify_output
         print('Classifier Prediction Confidence : {}%'.format(no_confidence*100))
         classify_result = no_confidence*100
-        classify_text = 'No Pneumothorax Detection...!'
+        classify_text = 'No Pneumothorax Detected'
         background = Image.open(image_path)
 
         new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
@@ -212,21 +212,21 @@ def upload():
         return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
-# @app.route('/upload', methods = ['GET', 'POST'])
-# @login_required
-# def upload():
-#     if request.method == 'POST':
-#         file = request.files['file']
-#         filename = secure_filename(file.filename)
-#         scan=Scan(photo=filename,user_id=1)
-#         if scan is not None:
-#             db.session.add(scan)
-#             db.session.commit()
-#         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#         flash('uploaded successfully.', 'success')
-#         return redirect(url_for('prediction', filename=filename))
-#     return render_template('upload.html')
-    
+@app.route('/settings', methods=["GET", "POST"], endpoint="settings")
+@login_required 
+def settings():
+    form = settingsForm()
+    if request.method == "POST" and form.validate_on_submit():
+        if form.email.data:
+            email=form.email.data
+            size= form.size.data
+
+
+        return render_template('settings.html')
+
+    return render_template('settings.html',form=form)
+
+
 @app.route('/about/')
 def about():
     """Render the website's about page."""

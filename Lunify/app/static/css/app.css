@@ -33,6 +33,9 @@ h3{
   font-size: var(--font-size-med);
 }
 
+.primary-color{
+  color:var(--primary-colour)
+}
 .secondary-color{
   color:var(--secondary-colour)
 }
@@ -193,6 +196,15 @@ input[type="file"]{
   padding-bottom: .5em;
 }
 
+
+.bp-20{
+  padding-bottom: 1em;
+}
+
+.tp-30{
+  padding-top:2em;
+}
+
 .result_img{
   border-radius: 1em 0em 0em 1em ;
   width: 40vw;
@@ -202,9 +214,9 @@ input[type="file"]{
   position:absolute;
   z-index: 9999;
   top: 15%;
-  left: 40%;
+  left: 45%;
   border-radius: .4em;
-  padding: 1.2em;
+  padding: 1em;
   background-color: rgb(114, 181, 216);
   color: var(--black);
 
@@ -217,4 +229,36 @@ input[type="file"]{
 .alert-danger{
 
   background-color: rgb(221, 135, 164);
+}
+
+.settingsform{
+  width: 80vw;
+  
+  margin-top: 3em;
+}
+
+.form_group{
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.form-input{
+  width: 20vw;
+  height: 4em;
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.edit-icon{
+  width:20px;
+  height:20px;
+  margin-right:5px;
+}
+
+.cancel{
+  background-color: transparent;
+  border: none;
+  color:var(--primary-colour);
+  text-decoration: underline;
 }
