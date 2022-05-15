@@ -1,13 +1,13 @@
 <div class="nav__div flex">
   
-  <img src="{{ url_for('static', filename='images/lungify-logo.png') }}"></img>
+  <a href="{{ url_for('upload') }}"><img src="{{ url_for('static', filename='images/lungify-logo.png') }}"></img></a>
   
   <nav>
       <ul class="flex">
           <li class="nav__link"><a href="{{ url_for('upload') }}"> Upload </a></li>
           <li class="nav__link"><a href="{{ url_for('about') }}">Archive</a></li>
           <li class="nav__link"><a href="{{ url_for('settings') }}">Settings</a></li>
-          <li class="nav__link"> <a href="{{ url_for('about') }}">Blog</a></li>
+          <li class="nav__link"> <a href="{{ url_for('about') }}">About</a></li>
       </ul>
             
            
