@@ -7,7 +7,7 @@ This file creates your application.
 from __future__ import division, print_function
 from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from app.forms import LoginForm,RegisterForm,settingsForm
+from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan
 from werkzeug.security import check_password_hash
@@ -166,7 +166,11 @@ def prediction(filename):
     if result is not None:
             db.session.add(result)
             db.session.commit()
-    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text)
+		
+    form=resultsForm()
+    
+
+    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,form=form)
 
 
 @app.route('/upload', methods = ['GET', 'POST'])
@@ -215,7 +219,6 @@ def settings():
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
-
 
 
 @app.route("/register", methods=["GET", "POST"])
