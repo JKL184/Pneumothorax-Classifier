@@ -12,3 +12,7 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
 
+class resultsForm(FlaskForm):
+    patient= StringField("Patient Name", validators=[DataRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    employee = StringField('EmployeeID', validators=[InputRequired()])

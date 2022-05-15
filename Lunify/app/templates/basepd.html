@@ -7,19 +7,49 @@
 
     <div class="res_img_div">
   <!--     <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/>  -->
-      <!-- <img class="result_img" src="{{ url_for('static', filename='images/test.png') }}" alt="output"/> -->
-      <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/>
+      <img class="result_img" src="{{ url_for('static', filename='images/test.png') }}" alt="output"/>
+      <!-- <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/> -->
     </div>
 
+    <div>
     <div class="res_div" >
       <h2 name="review_text" class="secondary-color bp-10"> {{review_text}}</h2>
-      <!-- <h3 name="review_text" class=" secondary-color">{{review_text}}</h3> -->
+      <h3 name="review_text" class=" secondary-color  bp-10 ">Pneumothorax Detected</h3>
     
       <label for="review_text"  >Classification Confidence :  </label>
-    <!--  <label name="review_text" >{{result}}%</label> -->
-      
+      <label name="review_text" >99.548576%</label>
+    <!--  <label name="review_text" >{{result}}%</label> -->  
     </div>
+
+    <div class="res_div res_div_form">
+      <h3 name="review_text" class=" primary-color  bp-10 ">Patient Data</h3>
+      <form class="resultsform " action="{{ url_for('settings') }}" method="POST" enctype="multipart/form-data">
+        
+
+        <div class="form_group">
+          {{ form.patient.label }}
+          {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
+        </div>
+        <div class="form_group">
+          {{ form.location.label }}
+          {{ form.location(class='res-input',placeholder='Location') }}
+        </div>
+        <div class="form_group">
+          {{ form.employee.label }}
+          {{ form.employee(class='res-input',placeholder='employee ID') }}
+        </div>
+
+        <button type="submit" name="submit" class="cancel tp-30">Submit Data</button>
+
+      
+
+      </form>
+
+    </div>
+
+
     
+    </div>
 
   </div>
    

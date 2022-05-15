@@ -186,7 +186,8 @@ input[type="file"]{
 }
 .res_div{
   border: 1px solid var(--secondary-colour);
-  max-height: 10vh;
+  min-height: 10vh;
+  margin-bottom:2em;
   padding: 1em .5em .5em 1em;
   color: var(--primary-colour);
   border-radius: 1em;
@@ -261,4 +262,13 @@ input[type="file"]{
   border: none;
   color:var(--primary-colour);
   text-decoration: underline;
+}
+
+.res_div_form{
+  border: 1px solid var(--primary-colour);
+  
+}
+
+.res-input{
+  border:none;
 }
