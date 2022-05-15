@@ -181,8 +181,11 @@ def prediction(filename):
     if result is not None:
             db.session.add(result)
             db.session.commit()
+		
+    form=resultsForm()
+    
 
-    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text)
+    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,form=form)
 
 
 @app.route('/upload', methods = ['GET', 'POST'])
