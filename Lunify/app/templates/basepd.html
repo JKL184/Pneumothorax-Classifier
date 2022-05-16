@@ -23,9 +23,7 @@
 
     <div class="res_div res_div_form">
       <h3 name="review_text" class=" primary-color  bp-10 ">Patient Data</h3>
-      <form class="resultsform " action="{{ url_for('settings') }}" method="POST" enctype="multipart/form-data">
-        
-
+      <form class="resultsform " action="{{ url_for('addresult')}}" method="POST" enctype="multipart/form-data">
         <div class="form_group">
           {{ form.patient.label }}
           {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
@@ -38,10 +36,16 @@
           {{ form.employee.label }}
           {{ form.employee(class='res-input',placeholder='employee ID') }}
         </div>
+        {{ form.img() }}
+        {{ form.identification() }}
+        {{ form.confidence() }}
+        <!-- <input type="hidden" name="img" value="{{segmented_image}}">
+        <input type="hidden" name="confidence" value="{{result}}">
+        <input type="hidden" name="identification" value="{{identify}}"> -->
 
         <button type="submit" name="submit" class="cancel tp-30">Submit Data</button>
 
-      
+        
 
       </form>
 

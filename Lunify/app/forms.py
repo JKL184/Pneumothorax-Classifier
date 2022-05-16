@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField
+from wtforms import StringField, IntegerField, PasswordField,HiddenField
 
 from wtforms.validators import InputRequired, DataRequired,Email
 
@@ -13,7 +13,10 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
 
 class resultsForm(FlaskForm):
-    patient= StringField("Patient Name", validators=[DataRequired()])
+    img=HiddenField("img", validators=[])
+    confidence=HiddenField("confidence", validators=[])
+    identification=HiddenField("identification", validators=[])
+    patient= StringField("Patient Name", validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     employee = StringField('EmployeeID', validators=[InputRequired()])
 class RegisterForm(FlaskForm):

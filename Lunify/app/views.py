@@ -6,7 +6,7 @@ This file creates your application.
 """
 from __future__ import division, print_function
 from app import app ,db, login_manager
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash,g
 from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan
@@ -37,6 +37,8 @@ pred = prediction(classify_weights_path,segment_weights_path)
 # ###
 # Routing for your application.
 ###
+
+Mailemail=""
 
 
 
@@ -93,6 +95,8 @@ def jpg2png(file):
 
 @app.route('/test', methods=['GET', 'POST']) 
 def main_page():
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
@@ -106,7 +110,7 @@ def main_page():
             jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filename = filename.replace('.jpg','.png')
-        scan=Scan(photo=filename,user_id=1)
+        scan=Scan(photo=filename,user_id=g.user)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
@@ -115,12 +119,15 @@ def main_page():
         return redirect(url_for('prediction', filename=filename))
     return render_template('index.html')
 
-@app.route('/prediction/<filename>') 
+@app.route('/prediction/<filename>', methods = ['GET', 'POST']) 
 def prediction(filename):
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
 
 #     # Make prediction
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     scan=filename
+    name,extension=os.path.splitext(filename)
     classify_output, pred_mask = pred.Predict(image_path)
     print("Classification Output : ",classify_output)
     if(classify_output> 0.5):
@@ -133,22 +140,23 @@ def prediction(filename):
         background = background.convert("RGBA")
         overlay = overlay.convert("RGBA")
         new_img = Image.blend(background, overlay, 0.3)
-        new_graph_name = "Final_Output_pos_" + str(time.time()) + ".png"
+        new_graph_name = "Output_pos_" +name  + ".png"
         for filename in os.listdir('app/static/'):
-            if filename.startswith('Final_Output_p'):  # not to remove other images
+            if filename.startswith("Output_pos_" +name ):  # not to remove other images
                 os.remove('app/static/' + filename)
         new_img.save(os.path.join("app/static/", new_graph_name))
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Detected'
+        identification="Positive"
         #EMAIL
         smtp = smtplib.SMTP('smtp.gmail.com', 587)
         smtp.ehlo()
         smtp.starttls()
         smtp.login('Lungify@gmail.com', 'Lungify123')
         msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
-                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    img=os.path.join("app/static/", new_graph_name))
         # Make a list of emails, where you wanna send mail
-        to = ["jkl184013@gmail.com"]
+        to = [Mailemail,"jkl184013@gmail.com"]
         # Provide some data to the sendmail function!
         smtp.sendmail(from_addr="Lungify@gmail.com",
                     to_addrs=to, msg=msg.as_string())
@@ -157,27 +165,62 @@ def prediction(filename):
         no_confidence = 1 - classify_output
         print('Classifier Prediction Confidence : {}%'.format(no_confidence*100))
         classify_result = no_confidence*100
+        identification="Negative"
         classify_text = 'No Pneumothorax Detected'
         background = Image.open(image_path)
-        new_graph_name = "Final_Output_neg_" + str(time.time()) + ".png"
+        new_graph_name = "Output_neg_" + name  + ".png"
         for filename in os.listdir('app/static/'):
-            if filename.startswith('Final_Output_neg_'+filename):  # not to remove other images
+            if filename.startswith('Output_neg_'+filename):  # not to remove other images
                 os.remove('app/static/' + filename)
         background.save((os.path.join("app/static/", new_graph_name)))
-    result=Result(photo=new_graph_name,scan=scan,identification="Negative",confidence=classify_result,user_id=1)
-    if result is not None:
+    
+		
+    form = resultsForm()
+    # if request.method == "POST" and form.validate_on_submit():
+    #     Pname=form.patient.data
+    #     location=form.location.data
+    #     empid=form.password.data
+    #     date=datetime.date.today()
+    #     result=Result(photo=new_graph_name,scan=scan,location=location,patname=Pname,empid=empid,date,identification=identification,confidence=classify_result,user_id=g.user)
+    #     if result is not None:
+    #         db.session.add(result)
+    #         db.session.commit()
+        
+        
+    form.confidence.data=classify_result
+    form.img.data=new_graph_name
+    form.identification.data=identification
+    #print(type(classify_result))
+    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,identify=identification,form=form)
+
+@app.route('/prediction/add', methods = ['GET', 'POST']) 
+def addresult():
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
+    form = resultsForm()
+    print("check1")
+    if request.method == "POST" and form.validate_on_submit():
+        print("check2")
+        img = request.form['img']
+        confidence = request.form['confidence']
+        identification = request.form['identification']
+        Pname=form.patient.data
+        location=form.location.data
+        empid=form.employee.data
+        date=datetime.date.today()
+        result=Result(photo=img,location=location,patname=Pname,empid=empid,date_scanned=date,identification=identification,confidence=confidence,user_id=g.user)
+        if result is not None:
             db.session.add(result)
             db.session.commit()
-		
-    form=resultsForm()
-    
-
-    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,form=form)
-
+            print("check3")
+        return redirect(url_for('upload'))
+    return render_template('upload.html')
 
 @app.route('/upload', methods = ['GET', 'POST'])
 @login_required
 def upload():
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
@@ -195,17 +238,11 @@ def upload():
             jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filename = filename.replace('.jpeg','.png')
-        scan=Scan(photo=filename,user_id=1)
+        scan=Scan(photo=filename,user_id=g.user)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
-        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
-                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Make a list of emails, where you wanna send mail
-        to = ["jkl184013@gmail.com"]
-        # Provide some data to the sendmail function!
-        smtp.sendmail(from_addr="Lungify@gmail.com",
-                    to_addrs=to, msg=msg.as_string())
+        
         return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
@@ -215,10 +252,11 @@ def settings():
     form = settingsForm()
     if request.method == "POST" and form.validate_on_submit():
         if form.email.data:
-            email=form.email.data
+            global Mailemail
+            Mailemail=form.email.data
             size= form.size.data
 
-
+            
         return render_template('settings.html')
 
     return render_template('settings.html',form=form)
@@ -236,7 +274,6 @@ def register():
     if request.method == "POST" and form.validate_on_submit():
         # change this to actually validate the entire form submission
         # and not just one field
-        if form.email.data:
             # Get the username and password values from the form.
             fname=form.fname.data
             lname=form.lname.data
@@ -261,24 +298,15 @@ def login():
         # change this to actually validate the entire form submission
         # and not just one field
         if form.email.data:
-            # Get the username and password values from the form.
             email=form.email.data
             password=form.password.data
-            # using your model, query database for a user based on the username
-            # and password submitted. Remember you need to compare the password hash.
-            # You will need to import the appropriate function to do so.
-            # Then store the result of that query to a `user` variable so it can be
-            # passed to the login_user() method below.
             user = UserProfile.query.filter_by(email=email).first()
             if user is not None and check_password_hash(user.password, password):
-            # get user id, load into session
                 login_user(user)
                 flash('Logged in successfully.', 'success')
                 return redirect(url_for("upload"))
             else:
                 flash('Email or Password is incorrect.', 'danger')
-            # remember to flash a message to the user
-            # they should be redirected to a secure-page route instead
     return render_template("login.html", form=form)
 
 @app.route("/logout")

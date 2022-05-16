@@ -55,16 +55,23 @@ class Result(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     photo=db.Column(db.String(255))
-    scan=db.Column(db.String(255))
+    
+    location=db.Column(db.String(255))
+    patname=db.Column(db.String(255))
+    empid=db.Column(db.String(255))
     identification = db.Column(db.String(80))
-    confidence=db.Column(db.Float)
+    confidence=db.Column(db.String(80))
+    date_scanned=db.Column(db.Date)
     user_id=db.Column(db.Integer)
 
-    def __init__(self, photo,scan,identification,confidence, user_id ):
+    def __init__(self, photo,location,patname,empid,identification,confidence,date_scanned, user_id ):
         self.photo= photo
-        self.scan=scan
+        self.location=location
+        self.patname=patname
+        self.empid=empid
         self.identification=identification
         self.confidence=confidence
+        self.date_scanned=date_scanned
         self.user_id= user_id
 
     def get_id(self):
