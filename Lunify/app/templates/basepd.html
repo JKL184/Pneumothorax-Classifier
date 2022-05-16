@@ -7,18 +7,18 @@
 
     <div class="res_img_div">
   <!--     <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/>  -->
-      <img class="result_img" src="{{ url_for('static', filename='images/test.png') }}" alt="output"/>
-      <!-- <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/> -->
+      <!-- <img class="result_img" src="{{ url_for('static', filename='images/test.png') }}" alt="output"/> -->
+      <img class="result_img" src="{{ url_for('static', filename=segmented_image) }}" alt="output"/> 
     </div>
 
     <div>
     <div class="res_div" >
       <h2 name="review_text" class="secondary-color bp-10"> {{review_text}}</h2>
-      <h3 name="review_text" class=" secondary-color  bp-10 ">Pneumothorax Detected</h3>
+      <!-- <h3 name="review_text" class=" secondary-color  bp-10 ">Pneumothorax Detected</h3> -->
     
       <label for="review_text"  >Classification Confidence :  </label>
-      <label name="review_text" >99.548576%</label>
-    <!--  <label name="review_text" >{{result}}%</label> -->  
+      <!-- <label name="review_text" >99.548576%</label> -->
+    <label name="review_text" >{{result}}%</label>  
     </div>
 
     <div class="res_div res_div_form">

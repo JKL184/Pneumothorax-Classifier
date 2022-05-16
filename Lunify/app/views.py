@@ -38,10 +38,7 @@ pred = prediction(classify_weights_path,segment_weights_path)
 # Routing for your application.
 ###
 
-smtp = smtplib.SMTP('smtp.gmail.com', 587)
-smtp.ehlo()
-smtp.starttls()
-smtp.login('Lungify@gmail.com', 'Lungify123')
+
 
 # send our email message 'msg' to our boss
 def message(subject="Python Notification",
@@ -114,13 +111,7 @@ def main_page():
             db.session.add(scan)
             db.session.commit()
         # Call the message function
-        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
-                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Make a list of emails, where you wanna send mail
-        to = ["jkl184013@gmail.com"]
-        # Provide some data to the sendmail function!
-        smtp.sendmail(from_addr="Lungify@gmail.com",
-                    to_addrs=to, msg=msg.as_string())
+        
         return redirect(url_for('prediction', filename=filename))
     return render_template('index.html')
 
@@ -149,7 +140,18 @@ def prediction(filename):
         new_img.save(os.path.join("app/static/", new_graph_name))
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Detected'
-        
+        #EMAIL
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.login('Lungify@gmail.com', 'Lungify123')
+        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
+                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Make a list of emails, where you wanna send mail
+        to = ["jkl184013@gmail.com"]
+        # Provide some data to the sendmail function!
+        smtp.sendmail(from_addr="Lungify@gmail.com",
+                    to_addrs=to, msg=msg.as_string())
     else:
         print('No Pneumothorax Detection...!')
         no_confidence = 1 - classify_output
@@ -197,6 +199,13 @@ def upload():
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
+        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
+                    img=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Make a list of emails, where you wanna send mail
+        to = ["jkl184013@gmail.com"]
+        # Provide some data to the sendmail function!
+        smtp.sendmail(from_addr="Lungify@gmail.com",
+                    to_addrs=to, msg=msg.as_string())
         return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
