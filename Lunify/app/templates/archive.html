@@ -3,24 +3,36 @@
 <div id="results-group">
 	<h3 class="tp-30 bp-10 primary-color">Archive</h3>
 	<p class="bp-20 light-text italic primary-color">Click the image to expand details</p>
-	
-
+	<form action="{{ url_for('archive') }}" method="POST" enctype="multipart/form-data" id="searchForm">
+        <div class="form_group">
+            {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
+          </div>
+          <div class="form_group">
+            {{ form.location(class='res-input',placeholder='Location') }}
+          </div> <div class="form_group">
+            {{ form.date(class='res-input',placeholder='Date') }}
+          </div>
+        </div> <div class="form_group">
+            {{ form.identification(class='res-input') }}
+          </div>
+          <div class="form_group">
+            {{ form.employee(class='res-input',placeholder='employee ID') }}
+          </div>
+          <button type="submit" name="submit" class="cancel tp-30">Submit Data</button>
+        </form>
 	<table class="tp-30" cellspacing="0">
 		<thead class="primary-color">
 		<tr>
 		  <th>Chest Scan</th>
 		  <th>Patient Name</th>
-		  <th>Patient ID</th>
+		  <th>Identification</th>
 		  <th>Date Scanned</th>
 		  <th>Employee ID</th>
 		  <th>Location</th>
 		</thead>
 		</tr>
-
 		<tbody>
-		
 		{% for r in results %}
-
 		<tr>
 			<td>
 				<a  id=p_link  href="{{ url_for('get_result',resultid=r.id) }}"> 

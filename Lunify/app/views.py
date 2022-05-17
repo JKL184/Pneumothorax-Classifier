@@ -7,7 +7,7 @@ This file creates your application.
 from __future__ import division, print_function
 from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash,g,send_from_directory
-from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
+from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm,searchForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan,Setting
 from werkzeug.security import check_password_hash
@@ -186,9 +186,7 @@ def addresult():
     if current_user.is_authenticated():
         g.user = current_user.get_id()
     form = resultsForm()
-    print("check1")
     if request.method == "POST":
-        print("check2")
         img = form.img.data
         confidence = form.confidence.data
         identification = form.identification.data
@@ -196,7 +194,7 @@ def addresult():
         location=form.location.data
         empid=form.employee.data
         date=datetime.date.today()
-        result=Result(photo=img,location=location,patname=Pname,empid=empid,date_scanned=date,identification=identification,confidence=confidence,user_id=g.user)
+        result=Result(photo=img,location=location,patname=Pname,empid=g.user,date_scanned=date,identification=identification,confidence=confidence,user_id=g.user)
         if result is not None:
             db.session.add(result)
             db.session.commit()
@@ -272,11 +270,25 @@ def settings():
 
 
 
-@app.route("/archive")
+@app.route("/archive", methods=["GET", "POST"])
 def archive():
-    
+    form=searchForm()
     results=Result.query.order_by(Result.id.desc()).all()
-    return render_template('archive.html', results=results)
+    if request.method == "POST":
+        location=form.location.data
+        patname=form.patient.data
+        emp=form.employee.data
+        date=form.date.data
+        iden=form.identification.data
+        print([location,patname,emp,date,iden])
+        search_results= Result.query.filter((Result.location.like(location)|Result.patname.like(patname)|Result.empid.like(emp)|Result.identification.like(iden)|Result.date_scanned.is_(date)))
+        form=searchForm()
+        if ("" ==location == patname == emp == patname== iden) & date==None:
+            return render_template('archive.html', results=results,form=form)
+        else:
+            return render_template('archive.html', results=search_results,form=form)
+    
+    return render_template('archive.html', results=results,form=form)
 
 @app.route("/archive/<resultid>")
 def get_result(resultid):
