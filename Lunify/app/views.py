@@ -156,7 +156,7 @@ def prediction(filename):
         msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
                     img=os.path.join("app/static/", new_graph_name))
         # Make a list of emails, where you wanna send mail
-        to = [Mailemail,"jkl184013@gmail.com"]
+        to = [Mailemail,"jokal@yopmail.com"]
         # Provide some data to the sendmail function!
         smtp.sendmail(from_addr="Lungify@gmail.com",
                     to_addrs=to, msg=msg.as_string())
@@ -176,17 +176,6 @@ def prediction(filename):
     
 		
     form = resultsForm()
-    # if request.method == "POST" and form.validate_on_submit():
-    #     Pname=form.patient.data
-    #     location=form.location.data
-    #     empid=form.password.data
-    #     date=datetime.date.today()
-    #     result=Result(photo=new_graph_name,scan=scan,location=location,patname=Pname,empid=empid,date,identification=identification,confidence=classify_result,user_id=g.user)
-    #     if result is not None:
-    #         db.session.add(result)
-    #         db.session.commit()
-        
-        
     form.confidence.data=classify_result
     form.img.data=new_graph_name
     form.identification.data=identification
@@ -199,7 +188,7 @@ def addresult():
         g.user = current_user.get_id()
     form = resultsForm()
     print("check1")
-    if request.method == "POST" and form.validate_on_submit():
+    if request.method == "POST":
         print("check2")
         img = request.form['img']
         confidence = request.form['confidence']
@@ -255,9 +244,7 @@ def settings():
             global Mailemail
             Mailemail=form.email.data
             size= form.size.data
-
-            
-        return render_template('settings.html')
+        return render_template('settings.html',form=form)
 
     return render_template('settings.html',form=form)
 
