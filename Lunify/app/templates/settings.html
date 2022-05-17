@@ -3,7 +3,7 @@
 {% block main %}
 <div class="primary-color">
 <h3 class="bp-10 tp-30">Settings</h3>
-<p class="bp-20">Click to edit the value</p>
+<p class="bp-20 italic">Click to edit the value</p>
 
 <form class="settingsform" action="{{ url_for('settings') }}" method="POST" enctype="multipart/form-data">
     {{ form.csrf_token }}

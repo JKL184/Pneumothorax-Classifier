@@ -1,20 +1,46 @@
 {% extends "base.html" %} {% block main %}
 
 <div id="results-group">
-	<h1>Scans</h1>
-	<ul class="result list">
+	<h3 class="tp-30 bp-10 primary-color">Archive</h3>
+	<p class="bp-20 light-text italic primary-color">Click the image to expand details</p>
+	
+
+	<table class="tp-30" cellspacing="0">
+		<thead class="primary-color">
+		<tr>
+		  <th>Chest Scan</th>
+		  <th>Patient Name</th>
+		  <th>Patient ID</th>
+		  <th>Date Scanned</th>
+		  <th>Employee ID</th>
+		  <th>Location</th>
+		</thead>
+		</tr>
+
+		<tbody>
+		
 		{% for r in results %}
-		<li class="resultunit">
-			<img class="p_img" src="{{ url_for('get_image',filename=r.photo) }}">
-            
-			<p class="p_title">{{r.patname}}</p>
-			<p  class="p_location">{{r.identification}}</p>
-			<p  class="p_price">{{r.date_scanned}}</p>
-            <p  class="p_price">{{r.empid}}</p>
-            <p  class="p_price">{{r.location}}</p>
-			<a class="btn btn-primary" id=p_link href="{{ url_for('get_result',resultid=r.id) }}">View Result </a>
-		</li>
+
+		<tr>
+			<td>
+				<a  id=p_link  href="{{ url_for('get_result',resultid=r.id) }}"> 
+					<img class="p_img" src="{{ url_for('get_image',filename=r.photo) }}"></img>
+				</a>
+			</td>
+			<td> {{r.patname}}</td>
+			<td>{{r.identification}}</td>
+			<td> {{r.date_scanned}}</td>
+			<td>{{r.empid}}</td>
+			<td> {{r.location}} </td>
+		
+		</tr>
+
+
 		{% endfor %}
-	</ul>
+	
+
+	
+		</tbody>
+	</table>
 </div>
 {% endblock %}

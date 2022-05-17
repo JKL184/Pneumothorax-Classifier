@@ -12,37 +12,40 @@
 <body class="login_body">
   {% include 'flash_messages.html' %}
   <div class="login_form center">
-    <h4>Register</h4>
-    <h2 class="italic">Please register to access Lungify</h2>
+    <h1>Lungify</h1>
+    <h2 class="italic bp-10">Please register to access Lungify</h2>
     <form action="{{ url_for('register') }}" method="post">
       {{ form.csrf_token }}
       <div class="form-group ">
         {{ form.fname.label }}
         <br>
-        <br>
+       
         {{ form.fname(class='form-control') }}
       </div>
       <div class="form-group ">
         {{ form.lname.label}}
         <br>
-        <br>
+       
         {{ form.lname(class='form-control') }}
       </div>
       <div class="form-group ">
         {{ form.email.label }}
         <br>
-        <br>
+      
         {{ form.email(class='form-control') }}
       </div>
       <div class="form-group">
         {{ form.password.label }}
-        <br>
+      
         <br>
         {{ form.password(class='form-control') }}
+        <br>
+
       </div>
-      <button type="submit" name="submit" class="btn filled long_btn">Log in</button>
+      <button type="submit" name="submit" class="btn filled long_btn">Register Account</button>
     </form>
-    
+    <br/>
+    <a class="primary-color " href="{{ url_for('login') }}">Already have an Account? Log in here</a>
   </div>
 
   <div class="login_right_col">

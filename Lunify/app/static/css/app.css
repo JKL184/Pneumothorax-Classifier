@@ -59,6 +59,7 @@ h3{
 button,ul,li, a{ 
     text-decoration: none;
     list-style-type: none;
+    
 }
 
 .flex{
@@ -178,7 +179,7 @@ main{
 
 
 input[type="file"]{
-  display: none;
+  display:none;
 }
 
 .results{
@@ -272,3 +273,29 @@ input[type="file"]{
 .res-input{
   border:none;
 }
+
+.p_img{
+  width:4em;
+  height:4em;
+  border-radius: .5em;
+}
+
+table{
+  border-radius: 1em;
+  
+  width: 80vw;
+  text-align: center;
+  
+}
+
+td{
+  padding:.5em;
+  
+}
+
+tr:nth-child(even){
+  background-color: var(--light);
+}
+
+
+
