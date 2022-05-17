@@ -192,23 +192,23 @@ def addresult():
         identification = form.identification.data
         Pname=form.patient.data
         location=form.location.data
-        empid=form.employee.data
         date=datetime.date.today()
         result=Result(photo=img,location=location,patname=Pname,empid=g.user,date_scanned=date,identification=identification,confidence=confidence,user_id=g.user)
         if result is not None:
             db.session.add(result)
             db.session.commit()
-            print("check3")
-        if (identification=="Positive"):
+            
+        #if (identification=="Positive"):
+            sett=Setting.query.filter_by(user_id=g.user).first()
             smtp = smtplib.SMTP('smtp.gmail.com', 587)
             smtp.ehlo()
             smtp.starttls()
             smtp.login('Lungify@gmail.com', 'Lungify123')
-            body="Patient Name - "+Pname+" \n Location - "+location+" \n Employee ID - "+empid+" \n Date Scanned - "+date.strftime("%d %b, %Y ")
-            msg = message("Pneumothorax Detected - "+Pname, body,
+            body="Patient Name - "+Pname+" \n System Identification - "+identification+" \n Location - "+location+" \n Employee ID - "+g.user+" \n Date Scanned - "+date.strftime("%d %b, %Y ")
+            msg = message("Pneumothorax Detection Result - "+Pname, body,
                         img=os.path.join("app/static/outputs/", img))
             # Make a list of emails, where you wanna send mail
-            to = [Mailemail,"jokal@yopmail.com"]
+            to = [sett.email,"jokal@yopmail.com"]
             # Provide some data to the sendmail function!
             smtp.sendmail(from_addr="Lungify@gmail.com",
                         to_addrs=to, msg=msg.as_string())
@@ -246,14 +246,14 @@ def upload():
         return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
-@app.route('/settings', methods=["GET", "POST"], endpoint="settings")
+@app.route('/settings', methods=["GET", "POST"])
 @login_required 
 def settings():
     if current_user.is_authenticated():
         g.user = current_user.get_id()
     sett=Setting.query.filter_by(user_id=g.user).first()
     form = settingsForm()
-    if request.method == "POST" and form.validate_on_submit():
+    if request.method == "POST":
         Mailemail=form.email.data
         size= form.size.data
         if sett is not None:
@@ -349,8 +349,7 @@ def login():
             user = UserProfile.query.filter_by(email=email).first()
             if user is not None and check_password_hash(user.password, password):
                 login_user(user)
-                flash('Logged in successfully.', 'success')
-                return redirect(url_for("upload"))
+                return redirect(url_for("about"))
             else:
                 flash('Email or Password is incorrect.', 'danger')
     return render_template("login.html", form=form)
