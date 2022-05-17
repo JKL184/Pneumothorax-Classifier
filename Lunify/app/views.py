@@ -6,7 +6,7 @@ This file creates your application.
 """
 from __future__ import division, print_function
 from app import app ,db, login_manager
-from flask import render_template, request, redirect, url_for, flash,g
+from flask import render_template, request, redirect, url_for, flash,g,send_from_directory
 from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan
@@ -141,25 +141,25 @@ def prediction(filename):
         overlay = overlay.convert("RGBA")
         new_img = Image.blend(background, overlay, 0.3)
         new_graph_name = "Output_pos_" +name  + ".png"
-        for filename in os.listdir('app/static/'):
+        for filename in os.listdir('app/static/outputs/'):
             if filename.startswith("Output_pos_" +name ):  # not to remove other images
-                os.remove('app/static/' + filename)
-        new_img.save(os.path.join("app/static/", new_graph_name))
+                os.remove('app/static/outputs/' + filename)
+        new_img.save(os.path.join("app/static/outputs/", new_graph_name))
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Detected'
         identification="Positive"
-        #EMAIL
-        smtp = smtplib.SMTP('smtp.gmail.com', 587)
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.login('Lungify@gmail.com', 'Lungify123')
-        msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
-                    img=os.path.join("app/static/", new_graph_name))
-        # Make a list of emails, where you wanna send mail
-        to = [Mailemail,"jokal@yopmail.com"]
-        # Provide some data to the sendmail function!
-        smtp.sendmail(from_addr="Lungify@gmail.com",
-                    to_addrs=to, msg=msg.as_string())
+        # #EMAIL
+        # smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        # smtp.ehlo()
+        # smtp.starttls()
+        # smtp.login('Lungify@gmail.com', 'Lungify123')
+        # msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
+        #             img=os.path.join("app/static/", new_graph_name))
+        # # Make a list of emails, where you wanna send mail
+        # to = [Mailemail,"jokal@yopmail.com"]
+        # # Provide some data to the sendmail function!
+        # smtp.sendmail(from_addr="Lungify@gmail.com",
+        #             to_addrs=to, msg=msg.as_string())
     else:
         print('No Pneumothorax Detection...!')
         no_confidence = 1 - classify_output
@@ -169,12 +169,10 @@ def prediction(filename):
         classify_text = 'No Pneumothorax Detected'
         background = Image.open(image_path)
         new_graph_name = "Output_neg_" + name  + ".png"
-        for filename in os.listdir('app/static/'):
+        for filename in os.listdir('app/static/outputs/'):
             if filename.startswith('Output_neg_'+filename):  # not to remove other images
-                os.remove('app/static/' + filename)
-        background.save((os.path.join("app/static/", new_graph_name)))
-    
-		
+                os.remove('app/static/outputs/' + filename)
+        background.save((os.path.join("app/static/outputs/", new_graph_name)))	
     form = resultsForm()
     form.confidence.data=classify_result
     form.img.data=new_graph_name
@@ -190,9 +188,9 @@ def addresult():
     print("check1")
     if request.method == "POST":
         print("check2")
-        img = request.form['img']
-        confidence = request.form['confidence']
-        identification = request.form['identification']
+        img = form.img.data
+        confidence = form.confidence.data
+        identification = form.identification.data
         Pname=form.patient.data
         location=form.location.data
         empid=form.employee.data
@@ -202,6 +200,19 @@ def addresult():
             db.session.add(result)
             db.session.commit()
             print("check3")
+        if (int(confidence)> 50):
+            smtp = smtplib.SMTP('smtp.gmail.com', 587)
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login('Lungify@gmail.com', 'Lungify123')
+            body="Patient Name - "+Pname+" \n Location - "+location+" \n Employee ID - "+empid+" \n Date Scanned - "+date
+            msg = message("Pneumothorax Detected - "+Pname, body,
+                        img=os.path.join("app/static/outputs/", img))
+            # Make a list of emails, where you wanna send mail
+            to = [Mailemail,"jokal@yopmail.com"]
+            # Provide some data to the sendmail function!
+            smtp.sendmail(from_addr="Lungify@gmail.com",
+                        to_addrs=to, msg=msg.as_string())
         return redirect(url_for('upload'))
     return render_template('upload.html')
 
@@ -248,6 +259,22 @@ def settings():
 
     return render_template('settings.html',form=form)
 
+
+
+@app.route("/archive")
+def archive():
+    results=Result.query.order_by(Result.id.desc()).all()
+    return render_template('archive.html', results=results)
+
+@app.route("/archive/<resultid>")
+def get_result(resultid):
+    result = Result.query.filter_by(id=resultid).first()
+    return render_template('result.html', result=result)
+
+@app.route("/outputs/<filename>")
+def get_image(filename):
+    root_dir = os.getcwd()
+    return send_from_directory(os.path.join(root_dir, app.config['OUTPUT_FOLDER']), filename)
 
 @app.route('/about/')
 def about():

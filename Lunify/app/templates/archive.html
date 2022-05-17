@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block main %}
+
+<div id="results-group">
+	<h1>Scans</h1>
+	<ul class="result list">
+		{% for r in results %}
+		<li class="resultunit">
+			<img class="p_img" src="{{ url_for('get_image',filename=r.photo) }}">
+            
+			<p class="p_title">{{r.patname}}</p>
+			<p  class="p_location">{{r.identification}}</p>
+			<p  class="p_price">{{r.date_scanned}}</p>
+            <p  class="p_price">{{r.empid}}</p>
+            <p  class="p_price">{{r.location}}</p>
+			<a class="btn btn-primary" id=p_link href="{{ url_for('get_result',resultid=r.id) }}">View Result </a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}
