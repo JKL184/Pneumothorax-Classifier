@@ -3,10 +3,6 @@ from werkzeug.security import generate_password_hash
 
 
 class UserProfile(db.Model):
-    # You can use this to change the table name. The default convention is to use
-    # the class name. In this case a class name of UserProfile would create a
-    # user_profile (singular) table, but if we specify __tablename__ we can change it
-    # to `user_profiles` (plural) or some other name.
     __tablename__ = 'user_profiles'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -41,11 +37,13 @@ class Scan(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     photo=db.Column(db.String(255))
+    date_scanned=db.Column(db.Date)
     user_id=db.Column(db.Integer)
 
-    def __init__(self, photo, user_id ):
+    def __init__(self, photo,date_scanned, user_id ):
         self.photo= photo
         self.user_id= user_id
+        self.date_scanned=date_scanned
 
     def get_id(self):
         return str(self.id)  # python 3 support
@@ -72,6 +70,21 @@ class Result(db.Model):
         self.identification=identification
         self.confidence=confidence
         self.date_scanned=date_scanned
+        self.user_id= user_id
+
+    def get_id(self):
+        return str(self.id)  # python 3 support
+class Setting(db.Model):
+    __tablename__ = 'Settings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    size=db.Column(db.String(255))
+    email=db.Column(db.String(255))
+    user_id=db.Column(db.Integer)
+
+    def __init__(self, size,email, user_id ):
+        self.size= size
+        self.email=email
         self.user_id= user_id
 
     def get_id(self):

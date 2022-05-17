@@ -9,7 +9,7 @@ from app import app ,db, login_manager
 from flask import render_template, request, redirect, url_for, flash,g,send_from_directory
 from app.forms import LoginForm,RegisterForm,settingsForm,resultsForm
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import UserProfile,Result,Scan
+from app.models import UserProfile,Result,Scan,Setting
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 import io
@@ -110,7 +110,8 @@ def main_page():
             jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filename = filename.replace('.jpg','.png')
-        scan=Scan(photo=filename,user_id=g.user)
+        date=datetime.date.today()
+        scan=Scan(photo=filename,user_id=g.user,date_scanned=date)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
@@ -200,12 +201,12 @@ def addresult():
             db.session.add(result)
             db.session.commit()
             print("check3")
-        if (int(confidence)> 50):
+        if (identification=="Positive"):
             smtp = smtplib.SMTP('smtp.gmail.com', 587)
             smtp.ehlo()
             smtp.starttls()
             smtp.login('Lungify@gmail.com', 'Lungify123')
-            body="Patient Name - "+Pname+" \n Location - "+location+" \n Employee ID - "+empid+" \n Date Scanned - "+date
+            body="Patient Name - "+Pname+" \n Location - "+location+" \n Employee ID - "+empid+" \n Date Scanned - "+date.strftime("%d %b, %Y ")
             msg = message("Pneumothorax Detected - "+Pname, body,
                         img=os.path.join("app/static/outputs/", img))
             # Make a list of emails, where you wanna send mail
@@ -238,7 +239,8 @@ def upload():
             jpg2png(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filename = filename.replace('.jpeg','.png')
-        scan=Scan(photo=filename,user_id=g.user)
+        date=datetime.date.today()
+        scan=Scan(photo=filename,user_id=g.user,date_scanned=date)
         if scan is not None:
             db.session.add(scan)
             db.session.commit()
@@ -249,20 +251,30 @@ def upload():
 @app.route('/settings', methods=["GET", "POST"], endpoint="settings")
 @login_required 
 def settings():
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
+    sett=Setting.query.filter_by(user_id=g.user).first()
     form = settingsForm()
     if request.method == "POST" and form.validate_on_submit():
-        if form.email.data:
-            global Mailemail
-            Mailemail=form.email.data
-            size= form.size.data
-        return render_template('settings.html',form=form)
+        Mailemail=form.email.data
+        size= form.size.data
+        if sett is not None:
+            sett.email=Mailemail
+            sett.size=size
+            db.session.commit()
+        return render_template('settings.html',form=form,sett=sett)
+    if sett is None:
+        sett=Setting(email= "",size=0,user_id=g.user)
+        db.session.add(sett)
+        db.session.commit()
 
-    return render_template('settings.html',form=form)
+    return render_template('settings.html',form=form,sett=sett)
 
 
 
 @app.route("/archive")
 def archive():
+    
     results=Result.query.order_by(Result.id.desc()).all()
     return render_template('archive.html', results=results)
 

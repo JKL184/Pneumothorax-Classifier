@@ -13,7 +13,7 @@
       <br>
       <div>
       <img class= "edit-icon" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-      {{ form.size(class='form-input') }}
+      {{ form.size(class='form-input',value=sett.size)}}
         </div>
 
     </div>
@@ -24,7 +24,7 @@
       <br>
       <div>
       <img class= "edit-icon" src="{{ url_for('static', filename='images/edit-icon.png') }}"></img>
-      {{ form.email(class='form-input') }}
+      {{ form.email(class='form-input',value=sett.email )}}
       </div>
     </div>
     <button type="submit" name="submit" class="btn filled">Save</button>
