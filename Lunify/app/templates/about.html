@@ -2,7 +2,37 @@
 
 {% block main %}
 <h3 class="tp-30 bp-10">About</h3>
-<p >
-    Lungify is a 
-</p>
+
+
+<div class=" about_div">
+    <div class="flex about_card ">
+    <p >
+        Lungify is an AI designed to classifly Pneumothoraces.
+    </p>
+    <img src="{{url_for('static',filename='images/how-it-works.png')}}" alt="how it works">  </img>
+    </div>
+
+    <div class="flex tp-30">
+    <img src="{{url_for('static',filename='images/upload.png')}}" alt="upload screen">  </img>
+    <p class="tp-30" >You can upload chest scans at the 'upload' link in the nav bar. <br> <br>
+        Lungify's AI model accepts PNG,
+         JPG and DICOM files</p>
+    </div>
+
+    <div class="flex tp-30">
+        
+        <p class="tp-30" >Upon upload. Click detect. You will see the prediciton on the screen <br> <br>
+            You can add patient details and submit. Upon submit your medical expert will receive and email</p>
+        <img src="{{url_for('static',filename='images/pred.jpeg')}}" alt="upload screen">  </img>
+        </div>
+        <div class="flex tp-30">
+            <img src="{{url_for('static',filename='images/pred.jpeg')}}" alt="upload screen">  </img>
+            <p class="tp-30" >You can search for past results in the Archive<br> <br>
+                </p>
+           
+            </div>
+        
+</div>
+
+
 {% endblock %}

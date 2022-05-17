@@ -309,3 +309,18 @@ tr:nth-child(even){
   text-align: center;
 }
 
+.about_div{
+
+}
+
+.about_div >div>img{
+  width: 40vw;
+ 
+}
+.about_div>div>p{
+  width:20vw;
+}
+
+.about_card{
+  margin-top: 1em;
+}
