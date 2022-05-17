@@ -310,3 +310,18 @@ tr:nth-child(even){
   gap: var(--gap,1em);
 }
 
+.about_div{
+
+}
+
+.about_div >div>img{
+  width: 40vw;
+ 
+}
+.about_div>div>p{
+  width:20vw;
+}
+
+.about_card{
+  margin-top: 1em;
+}
