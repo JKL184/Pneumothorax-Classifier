@@ -3,23 +3,31 @@
 <div id="results-group">
 	<h3 class="tp-30 bp-10 primary-color">Archive</h3>
 	<p class="bp-20 light-text italic primary-color">Click the image to expand details</p>
-	<form action="{{ url_for('archive') }}" method="POST" enctype="multipart/form-data" id="searchForm">
-        <div class="form_group">
+
+	<form class="tp-30 archive_search flex" action="{{ url_for('archive') }}" method="POST" enctype="multipart/form-data" id="searchForm">
+        <h2 class="light-text primary-color">Filter:</h2>
+		<div class="form_search">
             {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
           </div>
-          <div class="form_group">
+          <div class="form_search">
             {{ form.location(class='res-input',placeholder='Location') }}
-          </div> <div class="form_group">
+          </div> <div class="form_search">
             {{ form.date(class='res-input',placeholder='Date') }}
           </div>
-        </div> <div class="form_group">
-            {{ form.identification(class='res-input') }}
+          <div class="form_search">
+            {{ form.identification(class='res-input',placeholder='Detection') }}
           </div>
-          <div class="form_group">
+          <div class="form_search">
             {{ form.employee(class='res-input',placeholder='employee ID') }}
           </div>
-          <button type="submit" name="submit" class="cancel tp-30">Submit Data</button>
+          <button type="submit" name="submit" class="btn">
+			  
+			  <img src="{{ url_for('static', filename='images/search.png') }}" alt="">
+
+		  </button>
         </form>
+
+
 	<table class="tp-30" cellspacing="0">
 		<thead class="primary-color">
 		<tr>

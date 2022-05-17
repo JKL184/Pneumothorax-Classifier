@@ -298,4 +298,14 @@ tr:nth-child(even){
 }
 
 
+.form_search{
+  border: 2px solid var(--light);
+  border-radius: .8em;
+  padding:1em .5em;
+}
+
+.archive_search{
+  width:80vw;
+  text-align: center;
+}
 
