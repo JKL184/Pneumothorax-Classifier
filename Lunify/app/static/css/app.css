@@ -305,7 +305,8 @@ tr:nth-child(even){
 }
 
 .archive_search{
-  width:80vw;
+  width:45vw;
   text-align: center;
+  gap: var(--gap,1em);
 }
 

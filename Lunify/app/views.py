@@ -275,15 +275,23 @@ def archive():
     form=searchForm()
     results=Result.query.order_by(Result.id.desc()).all()
     if request.method == "POST":
-        location=form.location.data
-        patname=form.patient.data
+        if form.location.data=="":
+            location=form.location.data
+        else:
+            location="%{}%".format(form.location.data)
+        if form.patient.data=="":
+            patname=form.patient.data
+        else:
+            patname="%{}%".format(form.patient.data)
         emp=form.employee.data
-        date=form.date.data
+        datesc=form.date.data
         iden=form.identification.data
-        print([location,patname,emp,date,iden])
-        search_results= Result.query.filter((Result.location.like(location)|Result.patname.like(patname)|Result.empid.like(emp)|Result.identification.like(iden)|Result.date_scanned.is_(date)))
+        print([location,patname,emp,datesc,iden])
+        search_results= Result.query.filter((Result.location.like(location)|Result.patname.like(patname)|Result.empid.like(emp)|Result.identification.like(iden)|Result.date_scanned.is_(datesc)))
         form=searchForm()
-        if ("" ==location == patname == emp == patname== iden) & date==None:
+        print(("" ==location == patname == emp == patname== iden))
+        print(datesc==None)
+        if ("" ==location == patname == emp == patname== iden) & (datesc==None):
             return render_template('archive.html', results=results,form=form)
         else:
             return render_template('archive.html', results=search_results,form=form)

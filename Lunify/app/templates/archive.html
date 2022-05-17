@@ -7,7 +7,7 @@
 	<form class="tp-30 archive_search flex" action="{{ url_for('archive') }}" method="POST" enctype="multipart/form-data" id="searchForm">
         <h2 class="light-text primary-color">Filter:</h2>
 		<div class="form_search">
-            {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
+            {{ form.patient(class='res-input',placeholder='Patient Name') }}
           </div>
           <div class="form_search">
             {{ form.location(class='res-input',placeholder='Location') }}
@@ -18,7 +18,7 @@
             {{ form.identification(class='res-input',placeholder='Detection') }}
           </div>
           <div class="form_search">
-            {{ form.employee(class='res-input',placeholder='employee ID') }}
+            {{ form.employee(class='res-input',placeholder='Employee ID') }}
           </div>
           <button type="submit" name="submit" class="btn">
 			  
