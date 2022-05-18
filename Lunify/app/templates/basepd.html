@@ -23,10 +23,11 @@
 
     <div class="res_div res_div_form">
       <h3 name="review_text" class=" primary-color  bp-10 ">Patient Data</h3>
+      <p class="bp-10">An email of the result will be sent to an expert</p>
       <form class="resultsform " action="{{ url_for('addresult')}}" method="POST" enctype="multipart/form-data">
         <div class="form_group">
           {{ form.patient.label }}
-          {{ form.patient(class='res-input',placeholder='Enter patient name here') }}
+          {{ form.patient(class='res-input',placeholder='Enter Patient Name ') }}
         </div>
         <div class="form_group">
           {{ form.location.label }}
@@ -39,11 +40,8 @@
         <input type="hidden" name="confidence" value="{{result}}">
         <input type="hidden" name="identification" value="{{identify}}"> -->
         <br>
-        <p>An email of the result will be sent to an expert</p>
-        <button type="submit" name="submit" class="cancel tp-30">Submit Data</button>
-
         
-
+        <button type="submit" name="submit" class="btn filled">Submit Data</button>
       </form>
 
     </div>
