@@ -12,18 +12,13 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app.models import UserProfile,Result,Scan,Setting
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
-import io
 import os 
-import matplotlib.pyplot as plt 
-import tensorflow as tf 
+import matplotlib.pyplot as plt  
 import numpy as np 
-import time
 import cv2
 import pydicom
 from PIL import Image
-from build_image import read_image,classify_decode
-from build_models import build_segment
-from prediction import prediction 
+from pred import prediction 
 import datetime
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -31,14 +26,16 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 import smtplib
 
-classify_weights_path = "../../models stuff/chexnet_model_new2.h5"
-segment_weights_path = '../../models stuff/B2best_Double_Unet_new.hdf5'
-pred = prediction(classify_weights_path,segment_weights_path)
+print("RUN VIEWS")
+
+classify_weights_path = "chexnet_model_new2.h5"
+segment_weights_path = 'B2best_Double_Unet_new.hdf5'
+predi = prediction(classify_weights_path,segment_weights_path)
+#
 # ###
 # Routing for your application.
 ###
 
-Mailemail=""
 
 
 
@@ -129,15 +126,15 @@ def prediction(filename):
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     scan=filename
     name,extension=os.path.splitext(filename)
-    classify_output, pred_mask = pred.Predict(image_path)
+    classify_output, pred_mask = predi.Predict(image_path)
     print("Classification Output : ",classify_output)
     if(classify_output> 0.5):
         print("Classifier Prediction Confidence : {}%".format(classify_output*100))
         print('segment printing')
         pred_mask1 = np.squeeze(pred_mask[:,:,:,1])
-        plt.imsave('predicted_mask.png', pred_mask1)
+        plt.imsave('pred_seg.png', pred_mask1)
         background = Image.open(image_path)
-        overlay = Image.open('predicted_mask.png')
+        overlay = Image.open('pred_seg.png')
         background = background.convert("RGBA")
         overlay = overlay.convert("RGBA")
         new_img = Image.blend(background, overlay, 0.3)
@@ -149,18 +146,6 @@ def prediction(filename):
         classify_result = classify_output*100
         classify_text = 'Pneumothorax Detected'
         identification="Positive"
-        # #EMAIL
-        # smtp = smtplib.SMTP('smtp.gmail.com', 587)
-        # smtp.ehlo()
-        # smtp.starttls()
-        # smtp.login('Lungify@gmail.com', 'Lungify123')
-        # msg = message("Pneumothorax Detected", "A Pneumothorax has been detected",
-        #             img=os.path.join("app/static/", new_graph_name))
-        # # Make a list of emails, where you wanna send mail
-        # to = [Mailemail,"jokal@yopmail.com"]
-        # # Provide some data to the sendmail function!
-        # smtp.sendmail(from_addr="Lungify@gmail.com",
-        #             to_addrs=to, msg=msg.as_string())
     else:
         print('No Pneumothorax Detection...!')
         no_confidence = 1 - classify_output
@@ -179,7 +164,7 @@ def prediction(filename):
     form.img.data=new_graph_name
     form.identification.data=identification
     #print(type(classify_result))
-    return render_template('basepd.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,identify=identification,form=form)
+    return render_template('pred.html',segmented_image = new_graph_name, result = classify_result, review_text = classify_text,identify=identification,form=form)
 
 @app.route('/prediction/add', methods = ['GET', 'POST']) 
 def addresult():
@@ -212,6 +197,7 @@ def addresult():
             # Provide some data to the sendmail function!
             smtp.sendmail(from_addr="Lungify@gmail.com",
                         to_addrs=to, msg=msg.as_string())
+            smtp.quit()
         return redirect(url_for('upload'))
     return render_template('upload.html')
 
@@ -220,6 +206,12 @@ def addresult():
 def upload():
     if current_user.is_authenticated():
         g.user = current_user.get_id()
+    sett=Setting.query.filter_by(user_id=g.user).first()
+    print('checke')
+    if sett is None:
+        sett=Setting(email= "",size=0,user_id=g.user)
+        db.session.add(sett)
+        db.session.commit()
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
@@ -309,8 +301,15 @@ def get_image(filename):
     return send_from_directory(os.path.join(root_dir, app.config['OUTPUT_FOLDER']), filename)
 
 @app.route('/about/')
+@login_required
 def about():
-    """Render the website's about page."""
+    if current_user.is_authenticated():
+        g.user = current_user.get_id()
+    sett=Setting.query.filter_by(user_id=g.user).first()
+    if sett is None:
+        sett=Setting(email= "",size=0,user_id=g.user)
+        db.session.add(sett)
+        db.session.commit()
     return render_template('about.html', name="Mary Jane")
 
 
@@ -318,9 +317,6 @@ def about():
 def register():
     form = RegisterForm()
     if request.method == "POST" and form.validate_on_submit():
-        # change this to actually validate the entire form submission
-        # and not just one field
-            # Get the username and password values from the form.
             fname=form.fname.data
             lname=form.lname.data
             email=form.email.data
